@@ -1,23 +1,28 @@
 import { nanoid } from 'nanoid';
-import { Component } from 'react';
+import { useState } from 'react';
 import { ContactsForm } from './PhonebookForm.styled';
 
-class PhonebookForm extends Component {
-  state = {
-    name: '',
-    number: '',
+const PhonebookForm = ({ addContact }) => {
+  const [name, setName] = useState('');
+  const [number, setNumber] = useState('');
+
+  const handleChange = e => {
+    const elName = e.target.name;
+    const elValue = e.target.value;
+    switch (elName) {
+      case 'name':
+        setName(elValue);
+        break;
+      case 'number':
+        setNumber(elValue);
+        break;
+      default:
+        break;
+    }
   };
 
-  handleChange = e => {
-    const name = e.target.name;
-    const value = e.target.value;
-    this.setState({ [name]: value });
-  };
-
-  createContact = e => {
+  const createContact = e => {
     e.preventDefault();
-    const name = this.state.name;
-    const number = this.state.number;
     if (name.split(' ').length < 2) {
       return alert('Name must contain more than 1 word.');
     }
@@ -29,38 +34,34 @@ class PhonebookForm extends Component {
       number,
       id: nanoid(),
     };
-    this.props.addContact(newContact);
-    this.setState({
-      name: '',
-      number: '',
-    });
+    addContact(newContact);
+    setName('');
+    setNumber('');
   };
 
-  render() {
-    return (
-      <ContactsForm onSubmit={this.createContact}>
-        <label htmlFor="name">Name</label>
-        <input
-          type="text"
-          name="name"
-          id="name"
-          onChange={this.handleChange}
-          value={this.state.name}
-          required
-        />
-        <label htmlFor="number">Number</label>
-        <input
-          type="tel"
-          name="number"
-          id="number"
-          onChange={this.handleChange}
-          value={this.state.number}
-          required
-        />
-        <button type="submit">Add contact</button>
-      </ContactsForm>
-    );
-  }
-}
+  return (
+    <ContactsForm onSubmit={createContact}>
+      <label htmlFor="name">Name</label>
+      <input
+        type="text"
+        name="name"
+        id="name"
+        onChange={handleChange}
+        value={name}
+        required
+      />
+      <label htmlFor="number">Number</label>
+      <input
+        type="tel"
+        name="number"
+        id="number"
+        onChange={handleChange}
+        value={number}
+        required
+      />
+      <button type="submit">Add contact</button>
+    </ContactsForm>
+  );
+};
 
 export default PhonebookForm;
